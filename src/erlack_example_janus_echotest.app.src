@@ -1,0 +1,14 @@
+{application, erlack_example_janus_echotest,
+ [{description, "Erlack Example Janus EchoTest"},
+  {vsn, "0.0.1"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib,
+    ecgi,
+    erlack
+   ]},
+  {env,[]},
+  {modules, []},
+  {licenses, ["Apache 2.0"]}
+ ]}.

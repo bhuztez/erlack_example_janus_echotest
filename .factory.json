@@ -1,0 +1,66 @@
+{
+    "v": "4.0",
+    "workspace": {
+        "name": "erlack_example_janus_echotest",
+        "links": [],
+        "commands": [
+            {
+                "name": "Janus Echo Test",
+                "type": "custom",
+                "commandLine": "janus\n",
+                "attributes": {
+                    "goal": "Run"
+                }
+            },
+            {
+                "name": "Debug Server",
+                "type": "custom",
+                "commandLine": "cd ${current.project.path}\nrebar3 compile\nerl -env ERL_LIBS _build/default/lib -s erlack_example_janus_echotest -noinput\n",
+                "attributes": {
+                    "goal": "Run",
+                    "previewUrl": "http://${server.port.8000}/"
+                }
+            }
+        ],
+        "projects": [
+            {
+                "name": "erlack_example_janus_echotest",
+                "type": "blank",
+                "description": "Erlack Example Janus EchoTest",
+                "path": "/erlack_example_janus_echotest",
+                "source": {
+                    "type": "git",
+                    "location": "git://github.com/bhuztez/erlack_example_janus_echotest.git",
+                    "parameters": {}
+                },
+                "mixins": [],
+                "attributes": {},
+                "modules": []
+            }
+        ],
+        "defaultEnv": "default",
+        "environments": {
+            "default": {
+                "recipe": {
+                    "content": "FROM eclipse/stack-base:debian\nRUN sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get -t jessie-backports install -y erlang-nox libssl-dev libglib2.0-dev && sudo apt-get install -y gcc make libtool automake libjansson-dev libnice-dev pkg-config gengetopt && cd /tmp && wget 'https://github.com/cisco/libsrtp/archive/v2.0.0.tar.gz' && tar xvf v2.0.0.tar.gz && cd libsrtp-2.0.0 && ./configure --prefix=/usr --enable-openssl && make shared_library && sudo make install && cd .. && wget 'https://github.com/meetecho/janus-gateway/archive/v0.2.6.tar.gz' && tar xvf v0.2.6.tar.gz && cd janus-gateway-0.2.6 && ./autogen.sh && ./configure --prefix=/usr --enable-libsrtp2 --disable-all-plugins --disable-all-transports --disable-all-handlers --enable-unix-sockets --enable-plugin-echotest && make && sudo make install && sudo make configs && echo '[general]\\nenabled = yes\\njson = plain\\npath = /tmp/janus.sock\\ntype = SOCK_DGRAM\\n[admin]\\nadmin_enabled = no\\n' | sudo tee /usr/etc/janus/janus.transport.pfunix.cfg && cd /tmp && rm -rf *.tar.gz janus-gateway-0.2.6 libsrtp-2.0.0 && sudo wget -O /usr/bin/rebar3 https://s3.amazonaws.com/rebar3/rebar3 && sudo chmod a+x /usr/bin/rebar3\nEXPOSE 8000\n",
+                    "type":"dockerfile",
+                    "contentType": "text/x-dockerfile"
+                },
+                "machines": {
+                    "dev-machine": {
+                        "servers": {},
+                        "agents": [
+                            "org.eclipse.che.terminal",
+                            "org.eclipse.che.ws-agent",
+                            "org.eclipse.che.ssh",
+                            "org.eclipse.che.exec"
+                        ],
+                        "attributes": {
+                            "memoryLimitBytes": "2147483648"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
